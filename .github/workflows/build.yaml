@@ -1,6 +1,10 @@
 name: Project Build
 
-on: [push]
+on:
+  push:
+  release:
+    types:
+      - published
 
 jobs:
   build-server:
@@ -27,7 +31,7 @@ jobs:
       # Only run on releases
       - name: Release
         uses: softprops/action-gh-release@v2
-        if: ${{ github.event_name == "release" && github.event.action == "published" }} 
+        if: ${{ github.event_name == 'release' && github.event.action == 'published' }} 
         with:
-          files: 
+          files:
             - Source/Server/bin/Release/net7.0/Server/GameServer  
