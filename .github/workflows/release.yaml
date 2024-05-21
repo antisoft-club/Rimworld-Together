@@ -27,12 +27,17 @@ jobs:
           dotnet-version: ${{ matrix.version}}
       - name: Compile target
         run: dotnet publish Source/Server/GameServer.csproj -c Release -r ${{ matrix.target }} --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true
+      - name: Find release
+        run: ls Source/Server/bin/Release/net7.0/${{ matrix.target }}/publish
+
+      
       - name: Rename release
         run: cp Source/Server/bin/Release/net7.0/${{ matrix.target }}/publish/GameServer.exe ${{ matrix.target }}.exe
+        if: startsWith( matrix.target, 'win')
 
-      # Only run on releases
-      - name: Release
+      
+      - name: Linux release
         uses: softprops/action-gh-release@v2
-        if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+        if: startsWith( matrix.target, 'linux')
         with:
-          files: ${{ matrix.target }}.exe
+          files: Source/Server/bin/Release/net7.0/${{ matrix.target }}/publish/GameServer
